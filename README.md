@@ -1,1 +1,6 @@
-# AgroDrone-Analytics
+# Video-Deteccion-De-objetos
+Crear aplicación en Android para Detección de Objectos Personalizados 
+
+Instrucciones:
+
+https://youtu.be/zLV6LiqTIOA
