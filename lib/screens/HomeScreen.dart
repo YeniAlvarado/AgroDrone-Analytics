@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
+
   const HomeScreen({super.key});
 
   @override
@@ -138,11 +139,27 @@ class HomeScreen extends StatelessWidget {
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
-        selectedItemColor: Color(0xFF1C8A52),
+        selectedItemColor: const Color(0xFF1C8A52),
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
-        items: [
+        onTap: (index) {
+          switch (index) {
+            case 0:
+            // Ya estás en Home
+              break;
+            case 1:
+              Navigator.pushReplacementNamed(context, '/explore');
+              break;
+            case 2:
+             Navigator.pushReplacementNamed(context, '/history');
+              break;
+            case 3:
+             Navigator.pushReplacementNamed(context, '/profile');
+              break;
+          }
+        },
+        items: const [
           BottomNavigationBarItem(
             icon: ImageIcon(AssetImage('assets/icons/Home.png')),
             label: 'Home',
@@ -161,6 +178,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
+
     );
   }
 
