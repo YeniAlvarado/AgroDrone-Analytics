@@ -71,6 +71,15 @@ flutter:
     - assets/images/Group 18156.png
     - assets/images/Group 18132 (1).png
     - assets/images/Group 18132.png
+    - assets/images/Mask group.png
+    - assets/images/Mask group (1).png
+    - assets/images/vacas.png
+    - assets/icons/Agro Assistant.png
+    - assets/icons/Explore.png
+    - assets/icons/Home.png
+    - assets/icons/Profile.png
+
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

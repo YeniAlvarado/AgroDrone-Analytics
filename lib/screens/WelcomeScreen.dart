@@ -1,6 +1,8 @@
 import 'package:agrodroneanalytics/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 
+import 'login_screen.dart';
+
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
 
@@ -21,7 +23,9 @@ class WelcomeScreen extends StatelessWidget {
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 60.0), // separación del borde
+              padding: const EdgeInsets.only(
+                bottom: 60.0,
+              ), // separación del borde
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -30,7 +34,11 @@ class WelcomeScreen extends StatelessWidget {
                     width: 240,
                     child: OutlinedButton(
                       onPressed: () {
-                        // TODO: Navegar a Login
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (_) => const LoginScreen(),
+                          ),
+                        ); // TODO: Navegar a Login
                       },
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: Colors.white),
@@ -54,7 +62,9 @@ class WelcomeScreen extends StatelessWidget {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                          MaterialPageRoute(
+                            builder: (context) => const RegisterScreen(),
+                          ),
                         );
                       },
 
