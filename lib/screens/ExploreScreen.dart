@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -11,8 +13,19 @@ class ExploreScreen extends StatefulWidget {
 
 class _ExploreScreenState extends State<ExploreScreen> {
   int _selectedIndex = 1;
-  double _zoom = 13.0;
   final MapController _mapController = MapController();
+  double _zoom = 15;
+  LatLng _currentCenter = LatLng(-16.409047, -71.537451);
+  LatLng? _searchedPoint;
+  final TextEditingController _scanFrequencyController = TextEditingController();
+  final TextEditingController _animalCountController = TextEditingController();
+
+  final TextEditingController _coordController = TextEditingController(text: "-16.409047, -71.537451");
+  final TextEditingController _removeController = TextEditingController();
+  final TextEditingController _startTimeController = TextEditingController();
+  final TextEditingController _endTimeController = TextEditingController();
+
+  List<LatLng> _points = [];
 
   void _onItemTapped(int index) {
     setState(() => _selectedIndex = index);
@@ -31,6 +44,51 @@ class _ExploreScreenState extends State<ExploreScreen> {
     }
   }
 
+  void _zoomIn() {
+    setState(() => _zoom++);
+    _mapController.move(_currentCenter, _zoom);
+  }
+
+  void _zoomOut() {
+    setState(() => _zoom--);
+    _mapController.move(_currentCenter, _zoom);
+  }
+
+  void _goToCoordinates() {
+    final coords = _coordController.text.split(',');
+    if (coords.length == 2) {
+      final lat = double.tryParse(coords[0].trim());
+      final lng = double.tryParse(coords[1].trim());
+      if (lat != null && lng != null) {
+        final newPoint = LatLng(lat, lng);
+        setState(() {
+          _currentCenter = newPoint;
+          _searchedPoint = newPoint; // Guardar punto buscado
+        });
+        _mapController.move(_currentCenter, _zoom);
+      }
+    }
+  }
+
+  void _removePoint() {
+    final index = int.tryParse(_removeController.text);
+    if (index != null && index > 0 && index <= _points.length) {
+      setState(() {
+        _points.removeAt(index - 1);
+      });
+    }
+  }
+
+  void _clearAllPoints() {
+    setState(() => _points.clear());
+  }
+
+  void _addPoint(LatLng point) {
+    setState(() {
+      _points.add(point);
+    });
+  }
+
   void _openFlightManagementPanel() {
     showModalBottomSheet(
       context: context,
@@ -40,109 +98,276 @@ class _ExploreScreenState extends State<ExploreScreen> {
         initialChildSize: 0.8,
         maxChildSize: 0.95,
         minChildSize: 0.6,
-        builder: (context, scrollController) => Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-          ),
-          padding: const EdgeInsets.all(20),
-          child: ListView(
-            controller: scrollController,
-            children: [
-              const Text('Gestión de Vuelos',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1C8A52))),
-              const SizedBox(height: 16),
-              Container(
-                height: 300,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.green),
-                ),
-                child: Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: FlutterMap(
-                        mapController: _mapController,
-                        options: MapOptions(
-                          center: LatLng(-16.409047, -71.537451),
-                          zoom: _zoom,
-                          minZoom: 4,
-                          maxZoom: 18,
-                        ),
-                        children: [
-                          TileLayer(
-                            urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                            subdomains: ['a', 'b', 'c'],
-                          ),
-                        ],
-                      ),
-                    ),
-                    Positioned(
-                      top: 10,
-                      right: 10,
-                      child: Column(
-                        children: [
-                          FloatingActionButton(
-                            mini: true,
-                            heroTag: 'zoom_in',
-                            onPressed: () {
-                              setState(() {
-                                _zoom += 1;
-                                _mapController.move(_mapController.center, _zoom);
-                              });
-                            },
-                            child: const Icon(Icons.zoom_in),
-                          ),
-                          const SizedBox(height: 8),
-                          FloatingActionButton(
-                            mini: true,
-                            heroTag: 'zoom_out',
-                            onPressed: () {
-                              setState(() {
-                                _zoom -= 1;
-                                _mapController.move(_mapController.center, _zoom);
-                              });
-                            },
-                            child: const Icon(Icons.zoom_out),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+        builder: (context, scrollController) => StatefulBuilder(
+          builder: (context, setModalState) => GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
               ),
-              const SizedBox(height: 16),
-              const Text('Tiempo de vuelo [min]'),
-              Slider(value: 180, min: 10, max: 360, divisions: 35, onChanged: (v) {}),
-              const Text('Frecuencia de escaneo'),
-              Slider(value: 15, min: 1, max: 60, divisions: 12, onChanged: (v) {}),
-              const Text('Cantidad de animales'),
-              Slider(value: 25, min: 0, max: 100, divisions: 20, onChanged: (v) {}),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              padding: const EdgeInsets.all(20),
+              child: Column(
                 children: [
-                  OutlinedButton(
-                    onPressed: () {},
-                    child: const Text('Cancelar'),
+                  const Text('Gestión de Vuelos',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1C8A52))),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _coordController,
+                          decoration: const InputDecoration(labelText: 'Latitud, Longitud'),
+                          keyboardType: TextInputType.text,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.search, color: Color(0xFF1C8A52)),
+                        onPressed: () {
+                          _goToCoordinates();
+                          setModalState(() {});
+                        },
+                      )
+                    ],
                   ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1C8A52),
-                      foregroundColor: Colors.white,
+                  const SizedBox(height: 8),
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Stack(
+                        children: [
+                          FlutterMap(
+                            mapController: _mapController,
+                            options: MapOptions(
+                              center: _currentCenter,
+                              zoom: _zoom,
+                              onTap: (tapPosition, point) {
+                                _addPoint(point);
+                                setModalState(() {});
+                              },
+                            ),
+                            children: [
+                              TileLayer(
+                                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                userAgentPackageName: 'com.example.app',
+                              ),
+                              PolygonLayer(
+                                polygons: [
+                                  Polygon(
+                                    points: _points,
+                                    color: Colors.green.withOpacity(0.5), // O sin opacidad si prefieres
+                                    borderColor: Colors.green[800]!,
+                                    borderStrokeWidth: 2.0,
+                                    isFilled: true, // Este es opcional, pero algunos lo necesitan según versión
+                                  )
+                                ],
+                              ),
+
+
+
+
+
+                              MarkerLayer(
+                                markers: [
+                                  // Puntos rojos enumerados
+                                  for (int i = 0; i < _points.length; i++)
+                                    Marker(
+                                      point: _points[i],
+                                      width: 40,
+                                      height: 40,
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          const Icon(Icons.location_pin, color: Colors.red, size: 40),
+                                          Text('${i + 1}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                        ],
+                                      ),
+                                    ),
+
+                                  // Punto verde para la búsqueda
+                                  if (_searchedPoint != null)
+                                    Marker(
+                                      point: _searchedPoint!,
+                                      width: 40,
+                                      height: 40,
+                                      child: const Icon(Icons.location_pin, color: Colors.green, size: 40),
+                                    ),
+                                ],
+                              ),
+
+                            ],
+                          ),
+                          // Botones de Zoom
+                          Positioned(
+                            bottom: 16,
+                            right: 16,
+                            child: Column(
+                              children: [
+                                FloatingActionButton(
+                                  heroTag: 'zoomIn',
+                                  mini: true,
+                                  backgroundColor: Colors.white,
+                                  onPressed: () {
+                                    setState(() => _zoom++);
+                                    _mapController.move(_currentCenter, _zoom);
+                                  },
+                                  child: const Icon(Icons.zoom_in, color: Colors.black),
+                                ),
+                                const SizedBox(height: 8),
+                                FloatingActionButton(
+                                  heroTag: 'zoomOut',
+                                  mini: true,
+                                  backgroundColor: Colors.white,
+                                  onPressed: () {
+                                    setState(() => _zoom--);
+                                    _mapController.move(_currentCenter, _zoom);
+                                  },
+                                  child: const Icon(Icons.zoom_out, color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    child: const Text('Aplicar'),
                   ),
+
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _removeController,
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(labelText: 'Eliminar punto #'),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () {
+                          _removePoint();
+                          setModalState(() {});
+                        },
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          _clearAllPoints();
+                          setModalState(() {});
+                        },
+                        child: const Text('Eliminar todos'),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  const Text('Horario del vuelo'),
+                  Row(
+                    children: [
+                      Expanded(
+                        child:TextField(
+                          controller: _startTimeController,
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(
+                            labelText: 'Inicio (hh:mm:ss)',
+                            border: OutlineInputBorder(),
+                          ),
+                          onSubmitted: (value) {
+                            final formatted = _formatToTime(value);
+                            setState(() {
+                              _startTimeController.text = formatted;
+                            });
+                          },
+                        ),
+
+
+
+
+
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: TextField(
+                          controller: _endTimeController,
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(
+                            labelText: 'Fin (hh:mm:ss)',
+                            border: OutlineInputBorder(),
+                          ),
+                          onEditingComplete: () {
+                            final formatted = _formatToTime(_endTimeController.text);
+                            setState(() {
+                              _endTimeController.text = formatted;
+                            });
+                          },
+                        ),
+
+
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+                  const Text('Frecuencia de escaneo'),
+                  TextField(
+                    controller: _scanFrequencyController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      hintText: 'Ej. 5 veces que escanerea el dron',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  const Text('Cantidad de animales'),
+                  TextField(
+                    controller: _animalCountController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      hintText: 'Ej. 20 animales que hay en el área',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      OutlinedButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Cancelar'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Lógica de aplicación si deseas manejar los valores
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1C8A52),
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text('Aplicar'),
+                      ),
+                    ],
+                  ),
+
+
                 ],
-              )
-            ],
+              ),
+            ),
           ),
         ),
       ),
     );
   }
+  String _formatToTime(String value) {
+    value = value.replaceAll(RegExp(r'\D'), '');
+    value = value.padLeft(6, '0');
+    final hh = value.substring(0, 2);
+    final mm = value.substring(2, 4);
+    final ss = value.substring(4, 6);
+    return '$hh:$mm:$ss';
+  }
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
