@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'HomeScreen.dart';
+import 'PasswordRecoveryScreen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -77,8 +78,12 @@ class LoginScreen extends StatelessWidget {
                       const Text('¿Te olvidaste tu contraseña? Ingresa '),
                       GestureDetector(
                         onTap: () {
-                          // TODO: ir a pantalla de recuperación
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const PasswordRecoveryScreen()),
+                          );
                         },
+
                         child: const Text(
                           'aquí',
                           style: TextStyle(color: Colors.blue),

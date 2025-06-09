@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
+import 'RutaGuardadaScreen.dart';
+
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});
 
@@ -14,7 +16,7 @@ class ExploreScreen extends StatefulWidget {
 class _ExploreScreenState extends State<ExploreScreen> {
   int _selectedIndex = 1;
   final MapController _mapController = MapController();
-  double _zoom = 15;
+  double _zoom = 2;
   LatLng _currentCenter = LatLng(-16.409047, -71.537451);
   LatLng? _searchedPoint;
   final TextEditingController _scanFrequencyController = TextEditingController();
@@ -95,9 +97,11 @@ class _ExploreScreenState extends State<ExploreScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.black.withOpacity(0.5),
       builder: (_) => DraggableScrollableSheet(
-        initialChildSize: 0.8,
-        maxChildSize: 0.95,
-        minChildSize: 0.6,
+        initialChildSize: 0.97,
+        maxChildSize: 1.0,
+        minChildSize: 0.8,
+
+
         builder: (context, scrollController) => StatefulBuilder(
           builder: (context, setModalState) => GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
@@ -130,7 +134,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                       )
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
                   Expanded(
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(16),
@@ -162,9 +166,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                   )
                                 ],
                               ),
-
-
-
 
 
                               MarkerLayer(
@@ -336,7 +337,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          // Lógica de aplicación si deseas manejar los valores
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const RutaGuardadaScreen()),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF1C8A52),

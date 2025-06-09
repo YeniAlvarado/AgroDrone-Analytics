@@ -1,10 +1,19 @@
-import 'package:agrodroneanalytics/screens/ExploreScreen.dart';
-import 'package:agrodroneanalytics/screens/HomeScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
+
 import 'screens/splash_screen.dart';
+import 'screens/HomeScreen.dart';
+import 'screens/ExploreScreen.dart';
+import 'screens/HistoryScreen.dart';
+import 'screens/NotificationScreen.dart';
+import 'screens/profile_screen.dart';
+import 'screens/CameraScreen.dart';
 
+late List<CameraDescription> cameras;
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  cameras = await availableCameras();
   runApp(const MyApp());
 }
 
@@ -16,12 +25,29 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
-      routes: {
-        '/': (context) => const SplashScreen(),
-        '/home': (context) => const HomeScreen(),
-        '/explore': (context) => const ExploreScreen(),
-        // '/history': (context) => const HistoryScreen(),
-        // '/profile': (context) => const ProfileScreen(),
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/':
+            return MaterialPageRoute(builder: (_) => const SplashScreen());
+          case '/home':
+            return MaterialPageRoute(builder: (_) => const HomeScreen());
+          case '/explore':
+            return MaterialPageRoute(builder: (_) => const ExploreScreen());
+          case '/history':
+            return MaterialPageRoute(builder: (_) => const HistoryScreen());
+          case '/notifications':
+            return MaterialPageRoute(builder: (_) => const NotificationScreen());
+          case '/profile':
+            return MaterialPageRoute(builder: (_) => const ProfileScreen());
+          case '/camera':
+            return MaterialPageRoute(builder: (_) => CameraScreen(cameras: cameras)); // ✅ Aquí sí se puede usar
+          default:
+            return MaterialPageRoute(
+              builder: (_) => const Scaffold(
+                body: Center(child: Text('Ruta no encontrada')),
+              ),
+            );
+        }
       },
     );
   }

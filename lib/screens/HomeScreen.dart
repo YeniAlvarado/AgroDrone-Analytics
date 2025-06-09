@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'CameraScreen.dart';
+
 class HomeScreen extends StatelessWidget {
 
   const HomeScreen({super.key});
@@ -16,9 +18,21 @@ class HomeScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Icon(Icons.fullscreen, size: 28),
+                IconButton(
+                  icon: const Icon(Icons.fullscreen, size: 40),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/camera'); // ✅ usa la ruta segura
+                  },
+                ),
+
+
                 Image.asset('assets/images/Group 18156.png', height: 40),
-                const Icon(Icons.chat_bubble_outline, size: 28),
+                IconButton(
+                  icon: const Icon(Icons.chat_bubble_outline, size: 28),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/notifications');
+                  },
+                )
               ],
             ),
             const SizedBox(height: 12),
