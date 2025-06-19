@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 
-<<<<<<< HEAD
-=======
 import 'CameraScreen.dart';
->>>>>>> 52f5e3970bde0395970daf295ddf3d20ecfb1b6b
 
 class HomeScreen extends StatelessWidget {
 

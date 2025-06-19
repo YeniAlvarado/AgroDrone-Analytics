@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> 52f5e3970bde0395970daf295ddf3d20ecfb1b6b
 allprojects {
     repositories {
         google()

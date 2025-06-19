@@ -8,11 +8,7 @@ plugins {
 android {
     namespace = "com.example.agrodroneanalytics"
     compileSdk = flutter.compileSdkVersion
-<<<<<<< HEAD
     ndkVersion = "27.0.12077973"
-=======
-    ndkVersion = flutter.ndkVersion
->>>>>>> 52f5e3970bde0395970daf295ddf3d20ecfb1b6b
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -28,11 +24,7 @@ android {
         applicationId = "com.example.agrodroneanalytics"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-<<<<<<< HEAD
         minSdk = 26
-=======
-        minSdk = flutter.minSdkVersion
->>>>>>> 52f5e3970bde0395970daf295ddf3d20ecfb1b6b
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

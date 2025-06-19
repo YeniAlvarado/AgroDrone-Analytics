@@ -1,10 +1,9 @@
-
 import 'dart:convert';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
-import 'package:http_parser/http_parser.dart'; // <-- IMPORTANTE
+import 'package:http_parser/http_parser.dart';
 
 class Detection {
   final double x1, y1, x2, y2, confidence;
@@ -20,11 +19,9 @@ class Detection {
   });
 }
 
-// ... (imports y clase Detection igual que antes)
-
 class CameraScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
-  const CameraScreen({super.key, required this.cameras});
+  const CameraScreen({Key? key, required this.cameras}) : super(key: key);
 
   @override
   State<CameraScreen> createState() => _CameraScreenState();
@@ -66,25 +63,23 @@ class _CameraScreenState extends State<CameraScreen> {
       final jpeg = img.encodeJpg(rgb);
 
       final request = http.MultipartRequest(
-          'POST',
-          Uri.parse('http://192.168.1.72:8000/detect/')
+        'POST',
+        Uri.parse('http://192.168.1.72:8000/detect/'),
       );
       request.files.add(
         http.MultipartFile.fromBytes(
           'file',
           jpeg,
           filename: 'image.jpg',
-          contentType: MediaType('image', 'jpeg'), // <--- AGREGA ESTO
+          contentType: MediaType('image', 'jpeg'),
         ),
       );
 
       final response = await request.send();
       final responseBody = await response.stream.bytesToString();
-      print("RESPUESTA JSON: $responseBody");
+
       final result = json.decode(responseBody);
       List detections = result["detections"] ?? [];
-
-      print('Detections recibidas: $detections');
 
       setState(() {
         _detections = detections.map<Detection>((d) => Detection(
@@ -140,25 +135,44 @@ class _CameraScreenState extends State<CameraScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final previewSize = _controller?.value.previewSize;
-    final previewW = previewSize?.height ?? 416;
-    final previewH = previewSize?.width ?? 416;
-
-    print("Preview size: $previewW x $previewH");
-
     return Scaffold(
       appBar: AppBar(title: const Text('Cámara en vivo')),
       body: _isInitialized && _controller != null
-          ? Stack(
-        children: [
-          CameraPreview(_controller!),
-          CustomPaint(
-            painter: _detections.isNotEmpty
-                ? BoxPainter(_detections, previewW, previewH)
-                : null,
-            child: Container(),
-          ),
-        ],
+          ? LayoutBuilder(
+        builder: (context, constraints) {
+          final previewSize = _controller!.value.previewSize;
+          final double previewW = previewSize!.height;
+          final double previewH = previewSize.width;
+          final double widgetW = constraints.maxWidth;
+          final double widgetH = constraints.maxHeight;
+
+          // Calcula el factor de escala y el offset para centrar el preview sin deformar (BoxFit.contain)
+          final double scale = (previewW / previewH > widgetW / widgetH)
+              ? widgetW / previewW
+              : widgetH / previewH;
+          final double displayW = previewW * scale;
+          final double displayH = previewH * scale;
+          final double offsetX = (widgetW - displayW) / 2;
+          final double offsetY = (widgetH - displayH) / 2;
+
+          return Stack(
+            children: [
+              CameraPreview(_controller!),
+              Positioned(
+                left: offsetX,
+                top: offsetY,
+                width: displayW,
+                height: displayH,
+                child: CustomPaint(
+                  painter: _detections.isNotEmpty
+                      ? BoxPainter(_detections, previewW, previewH)
+                      : null,
+                  child: Container(),
+                ),
+              ),
+            ],
+          );
+        },
       )
           : const Center(child: CircularProgressIndicator()),
     );
@@ -190,7 +204,6 @@ class BoxPainter extends CustomPainter {
       textAlign: TextAlign.left,
       textDirection: TextDirection.ltr,
     );
-
     for (final d in detections) {
       final rect = Rect.fromLTRB(
         d.x1 * size.width / previewW,
@@ -199,8 +212,6 @@ class BoxPainter extends CustomPainter {
         d.y2 * size.height / previewH,
       );
       canvas.drawRect(rect, paint);
-
-      // Etiqueta con nombre de clase y confianza
       final className = d.classId < classNames.length ? classNames[d.classId] : 'unknown';
       final label = '$className ${(d.confidence * 100).toStringAsFixed(1)}%';
       textPainter.text = TextSpan(
@@ -222,4 +233,3 @@ class BoxPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
-

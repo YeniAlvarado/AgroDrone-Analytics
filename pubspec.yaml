@@ -27,7 +27,6 @@ environment:
 # dependencies can be manually updated by changing the version numbers below to
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
-<<<<<<< HEAD
 # versions available, run `flutter pub outdated`.
 dependencies:
   flutter:
@@ -39,15 +38,6 @@ dependencies:
   video_player: any
   flutter_map: ^6.0.0
   latlong2: 0.9.0
-=======
-dependencies:
-  flutter:
-    sdk: flutter
-  camera: ^0.10.5+9  # ✅ última versión estable al 2025
-  flutter_map: ^6.0.0
-  latlong2: 0.9.0
-  image_picker: ^1.0.4
->>>>>>> 52f5e3970bde0395970daf295ddf3d20ecfb1b6b
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -57,11 +47,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-<<<<<<< HEAD
   # The "flutter_lints" package below contains aset of recommended lints to
-=======
-  # The "flutter_lints" package below contains a set of recommended lints to
->>>>>>> 52f5e3970bde0395970daf295ddf3d20ecfb1b6b
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
@@ -107,10 +93,6 @@ flutter:
     - assets/images/area_05.png
     - assets/images/area_central.png
     - assets/images/Group 18245.png
-<<<<<<< HEAD
-=======
-
->>>>>>> 52f5e3970bde0395970daf295ddf3d20ecfb1b6b
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
@@ -136,8 +118,3 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
-<<<<<<< HEAD
-=======
-historial:
-  png:
->>>>>>> 52f5e3970bde0395970daf295ddf3d20ecfb1b6b
