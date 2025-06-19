@@ -1,5 +1,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<<<<<<< HEAD
     <application
+=======
+
+
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- 👇 Permiso aquí -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application
+
+>>>>>>> 52f5e3970bde0395970daf295ddf3d20ecfb1b6b
         android:label="agrodroneanalytics"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
@@ -20,6 +32,10 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+<<<<<<< HEAD
+=======
+
+>>>>>>> 52f5e3970bde0395970daf295ddf3d20ecfb1b6b
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

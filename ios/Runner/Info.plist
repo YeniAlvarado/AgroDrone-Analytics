@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+<<<<<<< HEAD
+=======
+	<key>NSCameraUsageDescription</key>
+    <string>Necesitamos acceder a la cámara para monitoreo.</string>
+
+>>>>>>> 52f5e3970bde0395970daf295ddf3d20ecfb1b6b
 </dict>
 </plist>

@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 import 'package:agrodroneanalytics/screens/CameraScreen.dart';
 import 'package:agrodroneanalytics/screens/Detecci%C3%B3nDron.dart';
+=======
+>>>>>>> 52f5e3970bde0395970daf295ddf3d20ecfb1b6b
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 
@@ -9,6 +12,10 @@ import 'screens/ExploreScreen.dart';
 import 'screens/HistoryScreen.dart';
 import 'screens/NotificationScreen.dart';
 import 'screens/profile_screen.dart';
+<<<<<<< HEAD
+=======
+import 'screens/CameraScreen.dart';
+>>>>>>> 52f5e3970bde0395970daf295ddf3d20ecfb1b6b
 
 late List<CameraDescription> cameras;
 
@@ -25,7 +32,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+<<<<<<< HEAD
       initialRoute: '/deteccion',
+=======
+      initialRoute: '/',
+>>>>>>> 52f5e3970bde0395970daf295ddf3d20ecfb1b6b
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case '/':
@@ -41,9 +52,13 @@ class MyApp extends StatelessWidget {
           case '/profile':
             return MaterialPageRoute(builder: (_) => const ProfileScreen());
           case '/camera':
+<<<<<<< HEAD
             return MaterialPageRoute(builder: (_) => CameraScreen(cameras: cameras));
           case '/deteccion':
             return MaterialPageRoute(builder: (_) => OpcionesCamara(cameras: cameras));
+=======
+            return MaterialPageRoute(builder: (_) => CameraScreen(cameras: cameras)); // ✅ Aquí sí se puede usar
+>>>>>>> 52f5e3970bde0395970daf295ddf3d20ecfb1b6b
           default:
             return MaterialPageRoute(
               builder: (_) => const Scaffold(
